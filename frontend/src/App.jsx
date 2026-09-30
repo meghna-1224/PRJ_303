@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import MyApplications from "./pages/MyApplications";
+import JobMatches from "./pages/JobMatches";
 import "./App.css";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/applications" element={<MyApplications />} />
+                <Route path="/job-matches" element={<JobMatches />} />
             </Routes>
 
         </BrowserRouter>
