@@ -56,3 +56,14 @@ export async function getJobMatches(userId) {
 
     return response.json();
 }
+export async function getSbertJobMatches(userId) {
+    const response = await fetch(
+        `${API_BASE_URL}/matches/sbert/${userId}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch SBERT job matches");
+    }
+
+    return response.json();
+}

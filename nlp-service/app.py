@@ -4,6 +4,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import re
 
+import onnxruntime as ort
+import numpy as np
+from tokenizers import Tokenizer
+
 
 app = FastAPI(
     title="PRJ_303 NLP Service",
@@ -62,6 +66,64 @@ def preprocess_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text).strip()
 
     return text
+
+
+# ---------------------------------------------------------
+# Skill extraction and comparison
+# ---------------------------------------------------------
+
+def extract_skills(skill_text: str) -> list[str]:
+
+    if not skill_text:
+        return []
+
+    skills = []
+
+    for skill in skill_text.split(","):
+
+        skill = skill.strip()
+
+        if skill:
+            skills.append(skill)
+
+    return skills
+
+
+def compare_skills(
+    candidate_skills: str,
+    required_skills: str
+):
+
+    candidate_list = extract_skills(candidate_skills)
+    required_list = extract_skills(required_skills)
+
+    candidate_normalized = {
+        preprocess_text(skill): skill
+        for skill in candidate_list
+    }
+
+    matching_skills = []
+    missing_skills = []
+
+    for required_skill in required_list:
+
+        normalized_required = preprocess_text(
+            required_skill
+        )
+
+        if normalized_required in candidate_normalized:
+
+            matching_skills.append(
+                required_skill
+            )
+
+        else:
+
+            missing_skills.append(
+                required_skill
+            )
+
+    return matching_skills, missing_skills
 
 
 # ---------------------------------------------------------
@@ -196,5 +258,191 @@ def match_jobs(request: MatchRequest):
 
     return {
         "algorithm": "Improved TF-IDF + Cosine Similarity",
+        "matches": results
+    }
+
+
+# ---------------------------------------------------------
+# SBERT + Cosine Similarity
+# ---------------------------------------------------------
+
+SBERT_MODEL_PATH = "sbert-model/model.onnx"
+SBERT_TOKENIZER_PATH = "sbert-model/tokenizer.json"
+
+
+sbert_session = ort.InferenceSession(
+    SBERT_MODEL_PATH,
+    providers=["CPUExecutionProvider"]
+)
+
+
+sbert_tokenizer = Tokenizer.from_file(
+    SBERT_TOKENIZER_PATH
+)
+
+
+sbert_tokenizer.enable_truncation(
+    max_length=256
+)
+
+sbert_tokenizer.enable_padding()
+
+
+# ---------------------------------------------------------
+# Create SBERT embeddings
+# ---------------------------------------------------------
+
+def create_sbert_embeddings(texts):
+
+    encodings = sbert_tokenizer.encode_batch(texts)
+
+    input_ids = np.array(
+        [encoding.ids for encoding in encodings],
+        dtype=np.int64
+    )
+
+    attention_mask = np.array(
+        [encoding.attention_mask for encoding in encodings],
+        dtype=np.int64
+    )
+
+    token_type_ids = np.array(
+        [encoding.type_ids for encoding in encodings],
+        dtype=np.int64
+    )
+
+    inputs = {
+        "input_ids": input_ids,
+        "attention_mask": attention_mask,
+        "token_type_ids": token_type_ids
+    }
+
+    outputs = sbert_session.run(
+        None,
+        inputs
+    )
+
+    # sentence_embedding is the second output
+    return outputs[1]
+
+
+# ---------------------------------------------------------
+# Calculate cosine similarity
+# ---------------------------------------------------------
+
+def calculate_cosine_similarity(
+    vector_a,
+    vector_b
+):
+
+    dot_product = np.dot(
+        vector_a,
+        vector_b
+    )
+
+    norm_a = np.linalg.norm(vector_a)
+
+    norm_b = np.linalg.norm(vector_b)
+
+    return dot_product / (norm_a * norm_b)
+
+
+# ---------------------------------------------------------
+# SBERT Job Matching
+# ---------------------------------------------------------
+
+@app.post("/match/sbert")
+def match_jobs_sbert(request: MatchRequest):
+
+    # -----------------------------------------------------
+    # 1. Prepare job texts
+    # -----------------------------------------------------
+
+    job_texts = []
+
+    for job in request.jobs:
+
+        text = (
+            job.title + " " +
+            job.description + " " +
+            job.requiredSkills
+        )
+
+        job_texts.append(text)
+
+
+    # -----------------------------------------------------
+    # 2. Combine candidate and job texts
+    # -----------------------------------------------------
+
+    all_texts = [
+        request.candidateSkills
+    ] + job_texts
+
+
+    # -----------------------------------------------------
+    # 3. Generate SBERT embeddings
+    # -----------------------------------------------------
+
+    embeddings = create_sbert_embeddings(
+        all_texts
+    )
+
+
+    # -----------------------------------------------------
+    # 4. Separate candidate embedding
+    # -----------------------------------------------------
+
+    candidate_embedding = embeddings[0]
+
+    results = []
+
+
+    # -----------------------------------------------------
+    # 5. Calculate similarity and compare skills
+    # -----------------------------------------------------
+
+    for i, job in enumerate(request.jobs):
+
+        job_embedding = embeddings[i + 1]
+
+        similarity = calculate_cosine_similarity(
+            candidate_embedding,
+            job_embedding
+        )
+
+        matching_skills, missing_skills = compare_skills(
+            request.candidateSkills,
+            job.requiredSkills
+        )
+
+        results.append({
+            "jobId": job.id,
+            "title": job.title,
+            "similarityScore": round(
+                float(similarity),
+                4
+            ),
+            "matchingSkills": matching_skills,
+            "missingSkills": missing_skills
+        })
+
+
+    # -----------------------------------------------------
+    # 6. Sort jobs by similarity
+    # -----------------------------------------------------
+
+    results.sort(
+        key=lambda x: x["similarityScore"],
+        reverse=True
+    )
+
+
+    # -----------------------------------------------------
+    # 7. Return SBERT results
+    # -----------------------------------------------------
+
+    return {
+        "algorithm": "SBERT + Cosine Similarity",
         "matches": results
     }

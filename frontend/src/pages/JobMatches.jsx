@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getJobMatches } from "../services/api";
+import { getSbertJobMatches } from "../services/api";
 
 function JobMatches() {
     const [matches, setMatches] = useState([]);
@@ -20,7 +20,7 @@ function JobMatches() {
                     return;
                 }
 
-                const data = await getJobMatches(loggedInUser.id);
+                const data = await getSbertJobMatches(loggedInUser.id);
 
                 setMatches(data.matches || []);
             } catch (err) {
