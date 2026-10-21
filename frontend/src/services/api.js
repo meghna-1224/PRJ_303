@@ -67,3 +67,27 @@ export async function getSbertJobMatches(userId) {
 
     return response.json();
 }
+// 5. Upload candidate resume
+export async function uploadResume(userId, file) {
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    const response = await fetch(
+        `${API_BASE_URL}/resume/upload/${userId}`,
+        {
+            method: "POST",
+            body: formData
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.error || "Resume upload failed"
+        );
+    }
+
+    return data;
+}
