@@ -1,7 +1,25 @@
-
 const API_BASE_URL = "http://localhost:8080/api";
 
-// 1. Get all jobs from the MySQL database through Spring Boot
+// Get the JWT token stored after login
+function getAuthHeaders() {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+
+    if (!loggedInUser) {
+        return {};
+    }
+
+    const user = JSON.parse(loggedInUser);
+
+    if (!user.token) {
+        return {};
+    }
+
+    return {
+        Authorization: `Bearer ${user.token}`
+    };
+}
+
+// 1. Get all jobs
 export async function getJobs() {
     const response = await fetch(`${API_BASE_URL}/jobs`);
 
@@ -41,12 +59,13 @@ export async function registerUser(userData) {
     return response.json();
 }
 
-// 4. Get NLP-matched jobs for a candidate
-// Spring Boot retrieves the candidate's profile and jobs,
-// then calls the Python FastAPI NLP service.
+// 4. Get NLP-matched jobs
 export async function getJobMatches(userId) {
     const response = await fetch(
-        `${API_BASE_URL}/matches/${userId}`
+        `${API_BASE_URL}/matches/${userId}`,
+        {
+            headers: getAuthHeaders()
+        }
     );
 
     if (!response.ok) {
@@ -56,9 +75,14 @@ export async function getJobMatches(userId) {
 
     return response.json();
 }
+
+// 5. Get SBERT job matches
 export async function getSbertJobMatches(userId) {
     const response = await fetch(
-        `${API_BASE_URL}/matches/sbert/${userId}`
+        `${API_BASE_URL}/matches/sbert/${userId}`,
+        {
+            headers: getAuthHeaders()
+        }
     );
 
     if (!response.ok) {
@@ -67,7 +91,8 @@ export async function getSbertJobMatches(userId) {
 
     return response.json();
 }
-// 5. Upload candidate resume
+
+// 6. Upload candidate resume
 export async function uploadResume(userId, file) {
     const formData = new FormData();
 
@@ -77,6 +102,7 @@ export async function uploadResume(userId, file) {
         `${API_BASE_URL}/resume/upload/${userId}`,
         {
             method: "POST",
+            headers: getAuthHeaders(),
             body: formData
         }
     );

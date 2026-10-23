@@ -1,24 +1,28 @@
 package com.prj303.backend.controller;
 
 import com.prj303.backend.dto.LoginRequest;
+import com.prj303.backend.dto.LoginResponse;
 import com.prj303.backend.dto.RegisterRequest;
 import com.prj303.backend.entity.User;
 import com.prj303.backend.service.UserService;
+import com.prj303.backend.security.JwtService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
-    public AuthController(UserService userService) {
+    public AuthController(
+            UserService userService,
+            JwtService jwtService) {
+
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
@@ -33,14 +37,13 @@ public class AuthController {
 
         User registeredUser = userService.registerUser(user);
 
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("id", registeredUser.getId());
-        response.put("name", registeredUser.getName());
-        response.put("email", registeredUser.getEmail());
-        response.put("role", registeredUser.getRole());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new LoginResponse(
+                        registeredUser.getId(),
+                        registeredUser.getName(),
+                        registeredUser.getEmail(),
+                        registeredUser.getRole(),
+                        null));
     }
 
     @PostMapping("/login")
@@ -52,6 +55,7 @@ public class AuthController {
                 request.getPassword());
 
         if (!valid) {
+
             return ResponseEntity
                     .status(401)
                     .body("Invalid email or password");
@@ -60,12 +64,17 @@ public class AuthController {
         User user = userService.getUserByEmail(
                 request.getEmail());
 
-        Map<String, Object> response = new HashMap<>();
+        String token = jwtService.generateToken(
+                user.getEmail(),
+                user.getId(),
+                user.getRole());
 
-        response.put("id", user.getId());
-        response.put("name", user.getName());
-        response.put("email", user.getEmail());
-        response.put("role", user.getRole());
+        LoginResponse response = new LoginResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole(),
+                token);
 
         return ResponseEntity.ok(response);
     }
