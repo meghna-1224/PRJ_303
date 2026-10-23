@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Chatbot from "./components/Chatbot";
+
 import Home from "./pages/Home";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
@@ -9,6 +11,7 @@ import Profile from "./pages/Profile";
 import MyApplications from "./pages/MyApplications";
 import JobMatches from "./pages/JobMatches";
 import "./App.css";
+
 
 function App() {
     return (
@@ -26,6 +29,7 @@ function App() {
                 <Route path="/applications" element={<MyApplications />} />
                 <Route path="/job-matches" element={<JobMatches />} />
             </Routes>
+            <Chatbot />
 
         </BrowserRouter>
     );
