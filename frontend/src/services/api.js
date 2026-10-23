@@ -1,7 +1,7 @@
 const API_BASE_URL = "http://localhost:8080/api";
 
 // Get the JWT token stored after login
-function getAuthHeaders() {
+export function getAuthHeaders() {
     const loggedInUser = localStorage.getItem("loggedInUser");
 
     if (!loggedInUser) {
@@ -107,7 +107,16 @@ export async function uploadResume(userId, file) {
         }
     );
 
-    const data = await response.json();
+    const responseText = await response.text();
+    let data = {};
+
+    if (responseText) {
+        try {
+            data = JSON.parse(responseText);
+        } catch {
+            data = { error: responseText };
+        }
+    }
 
     if (!response.ok) {
         throw new Error(

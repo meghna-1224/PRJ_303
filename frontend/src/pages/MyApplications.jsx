@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getAuthHeaders } from "../services/api";
 
 function MyApplications() {
     const [applications, setApplications] = useState([]);
@@ -22,7 +23,10 @@ function MyApplications() {
             }
 
             const response = await fetch(
-                `http://localhost:8080/api/applications/user/${loggedInUser.id}`
+                `http://localhost:8080/api/applications/user/${loggedInUser.id}`,
+                {
+                    headers: getAuthHeaders()
+                }
             );
 
             if (!response.ok) {

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { uploadResume } from "../services/api";
+import {
+    uploadResume,
+    getAuthHeaders
+} from "../services/api";
 
 function Profile() {
     const [profile, setProfile] = useState({
@@ -38,7 +41,10 @@ function Profile() {
 
                 // Load profile
                 const profileResponse = await fetch(
-                    `http://localhost:8080/api/profile/${user.id}`
+                    `http://localhost:8080/api/profile/${user.id}`,
+                    {
+                        headers: getAuthHeaders()
+                    }
                 );
 
                 if (profileResponse.ok) {
@@ -65,7 +71,10 @@ function Profile() {
 
                 // Load current resume
                 const resumeResponse = await fetch(
-                    `http://localhost:8080/api/resume/${user.id}`
+                    `http://localhost:8080/api/resume/${user.id}`,
+                    {
+                        headers: getAuthHeaders()
+                    }
                 );
 
                 if (resumeResponse.ok) {
@@ -179,7 +188,10 @@ function Profile() {
 
             // Fetch the latest resume information
             const resumeResponse = await fetch(
-                `http://localhost:8080/api/resume/${user.id}`
+                `http://localhost:8080/api/resume/${user.id}`,
+                {
+                    headers: getAuthHeaders()
+                }
             );
 
             if (resumeResponse.ok) {
@@ -232,7 +244,8 @@ function Profile() {
                     method: "POST",
 
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        ...getAuthHeaders()
                     },
 
                     body: JSON.stringify({

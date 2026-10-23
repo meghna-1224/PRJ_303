@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getJobById } from "../services/api";
+import {
+    getAuthHeaders,
+    getJobById
+} from "../services/api";
 
 function JobDetails() {
     const { id } = useParams();
@@ -51,7 +54,8 @@ function JobDetails() {
             const response = await fetch(
                 `http://localhost:8080/api/applications/apply?userId=${loggedInUser.id}&jobId=${job.id}`,
                 {
-                    method: "POST"
+                    method: "POST",
+                    headers: getAuthHeaders()
                 }
             );
 
