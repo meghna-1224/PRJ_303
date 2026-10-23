@@ -56,3 +56,23 @@ export async function getJobMatches(userId) {
 
     return response.json();
 }
+
+// 5. Send a message to the PGRKAM chatbot
+export async function sendChatMessage(message) {
+    const response = await fetch(`${API_BASE_URL}/chat`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: message
+        })
+    });
+
+    if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || "Chatbot request failed");
+    }
+
+    return response.json();
+}
