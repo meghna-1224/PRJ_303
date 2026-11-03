@@ -24,6 +24,24 @@ public class CandidateProfile {
 
     private String preferredLocation;
 
+    // New personal information fields
+    private String phone;
+
+    private String address;
+
+    private String dateOfBirth;
+
+    // New education details
+    private Double tenthPercentage;
+
+    private Double twelfthPercentage;
+
+    private String university;
+
+    private Integer graduationYear;
+
+    private Double graduationPercentage;
+
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
@@ -89,6 +107,70 @@ public class CandidateProfile {
 
     public void setPreferredLocation(String preferredLocation) {
         this.preferredLocation = preferredLocation;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Double getTenthPercentage() {
+        return tenthPercentage;
+    }
+
+    public void setTenthPercentage(Double tenthPercentage) {
+        this.tenthPercentage = tenthPercentage;
+    }
+
+    public Double getTwelfthPercentage() {
+        return twelfthPercentage;
+    }
+
+    public void setTwelfthPercentage(Double twelfthPercentage) {
+        this.twelfthPercentage = twelfthPercentage;
+    }
+
+    public String getUniversity() {
+        return university;
+    }
+
+    public void setUniversity(String university) {
+        this.university = university;
+    }
+
+    public Integer getGraduationYear() {
+        return graduationYear;
+    }
+
+    public void setGraduationYear(Integer graduationYear) {
+        this.graduationYear = graduationYear;
+    }
+
+    public Double getGraduationPercentage() {
+        return graduationPercentage;
+    }
+
+    public void setGraduationPercentage(Double graduationPercentage) {
+        this.graduationPercentage = graduationPercentage;
     }
 
     public User getUser() {

@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import MyApplications from "./pages/MyApplications";
 import JobMatches from "./pages/JobMatches";
+import Dashboard from "./pages/Dashboard";
 import "./App.css";
 
 
@@ -25,9 +26,11 @@ function App() {
                 <Route path="/jobs/:id" element={<JobDetails />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/applications" element={<MyApplications />} />
                 <Route path="/job-matches" element={<JobMatches />} />
+                
             </Routes>
             <Chatbot />
 

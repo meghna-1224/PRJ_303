@@ -102,7 +102,14 @@ function Navbar() {
                                     </div>
 
                                     <div className="dropdown-divider"></div>
-
+                                    <Link
+                                        to="/dashboard"
+                                        onClick={() =>
+                                            setDropdownOpen(false)
+                                        }
+                                    >
+                                        Dashboard
+                                    </Link>
                                     <Link
                                         to="/profile"
                                         onClick={() =>

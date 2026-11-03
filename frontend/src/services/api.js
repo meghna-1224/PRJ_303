@@ -86,7 +86,8 @@ export async function getSbertJobMatches(userId) {
     );
 
     if (!response.ok) {
-        throw new Error("Failed to fetch SBERT job matches");
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || "Failed to fetch SBERT job matches");
     }
 
     return response.json();

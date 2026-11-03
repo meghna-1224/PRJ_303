@@ -12,7 +12,19 @@ function Profile() {
         skills: "",
         experienceYears: "",
         location: "",
-        preferredLocation: ""
+        preferredLocation: "",
+
+        // New personal information
+        phone: "",
+        address: "",
+        dateOfBirth: "",
+
+        // New education details
+        tenthPercentage: "",
+        twelfthPercentage: "",
+        university: "",
+        graduationYear: "",
+        graduationPercentage: ""
     });
 
     const [message, setMessage] = useState("");
@@ -58,7 +70,25 @@ function Profile() {
                             savedProfile.experienceYears ?? "",
                         location: savedProfile.location || "",
                         preferredLocation:
-                            savedProfile.preferredLocation || ""
+                            savedProfile.preferredLocation || "",
+
+                        // New personal information
+                        phone: savedProfile.phone || "",
+                        address: savedProfile.address || "",
+                        dateOfBirth:
+                            savedProfile.dateOfBirth || "",
+
+                        // New education details
+                        tenthPercentage:
+                            savedProfile.tenthPercentage ?? "",
+                        twelfthPercentage:
+                            savedProfile.twelfthPercentage ?? "",
+                        university:
+                            savedProfile.university || "",
+                        graduationYear:
+                            savedProfile.graduationYear ?? "",
+                        graduationPercentage:
+                            savedProfile.graduationPercentage ?? ""
                     });
 
                     setIsEditing(false);
@@ -84,7 +114,9 @@ function Profile() {
                     // No resume uploaded yet.
                     setCurrentResume(null);
                 } else {
-                    console.error("Unable to load current resume.");
+                    console.error(
+                        "Unable to load current resume."
+                    );
                 }
             } catch (error) {
                 console.error(
@@ -252,11 +284,45 @@ function Profile() {
                         education: profile.education,
                         degree: profile.degree,
                         skills: profile.skills,
+
                         experienceYears:
-                            Number(profile.experienceYears),
+                            profile.experienceYears === ""
+                                ? null
+                                : Number(profile.experienceYears),
+
                         location: profile.location,
                         preferredLocation:
-                            profile.preferredLocation
+                            profile.preferredLocation,
+
+                        // New personal information
+                        phone: profile.phone,
+                        address: profile.address,
+                        dateOfBirth:
+                            profile.dateOfBirth,
+
+                        // New education details
+                        tenthPercentage:
+                            profile.tenthPercentage === ""
+                                ? null
+                                : Number(profile.tenthPercentage),
+
+                        twelfthPercentage:
+                            profile.twelfthPercentage === ""
+                                ? null
+                                : Number(profile.twelfthPercentage),
+
+                        university:
+                            profile.university,
+
+                        graduationYear:
+                            profile.graduationYear === ""
+                                ? null
+                                : Number(profile.graduationYear),
+
+                        graduationPercentage:
+                            profile.graduationPercentage === ""
+                                ? null
+                                : Number(profile.graduationPercentage)
                     })
                 }
             );
@@ -271,14 +337,38 @@ function Profile() {
                 );
 
                 setProfile({
-                    education: savedProfile.education || "",
-                    degree: savedProfile.degree || "",
-                    skills: savedProfile.skills || "",
+                    education:
+                        savedProfile.education || "",
+                    degree:
+                        savedProfile.degree || "",
+                    skills:
+                        savedProfile.skills || "",
                     experienceYears:
                         savedProfile.experienceYears ?? "",
-                    location: savedProfile.location || "",
+                    location:
+                        savedProfile.location || "",
                     preferredLocation:
-                        savedProfile.preferredLocation || ""
+                        savedProfile.preferredLocation || "",
+
+                    // New personal information
+                    phone:
+                        savedProfile.phone || "",
+                    address:
+                        savedProfile.address || "",
+                    dateOfBirth:
+                        savedProfile.dateOfBirth || "",
+
+                    // New education details
+                    tenthPercentage:
+                        savedProfile.tenthPercentage ?? "",
+                    twelfthPercentage:
+                        savedProfile.twelfthPercentage ?? "",
+                    university:
+                        savedProfile.university || "",
+                    graduationYear:
+                        savedProfile.graduationYear ?? "",
+                    graduationPercentage:
+                        savedProfile.graduationPercentage ?? ""
                 });
 
                 setMessage(
@@ -333,9 +423,9 @@ function Profile() {
                     <h1>My Profile</h1>
 
                     <p>
-                        Maintain your education, skills and
-                        employment preferences to improve your
-                        job search.
+                        Maintain your personal information,
+                        education, skills and employment
+                        preferences to improve your job search.
                     </p>
                 </div>
 
@@ -386,6 +476,68 @@ function Profile() {
                                 </p>
                             </div>
 
+                            <div className="profile-field">
+                                <strong>Phone</strong>
+                                <p>{profile.phone}</p>
+                            </div>
+
+                            <div className="profile-field">
+                                <strong>Address</strong>
+                                <p>{profile.address}</p>
+                            </div>
+
+                            <div className="profile-field">
+                                <strong>Date of Birth</strong>
+                                <p>{profile.dateOfBirth}</p>
+                            </div>
+
+                            <div className="profile-field">
+                                <strong>
+                                    10th Percentage
+                                </strong>
+                                <p>
+                                    {profile.tenthPercentage !== ""
+                                        ? `${profile.tenthPercentage}%`
+                                        : ""}
+                                </p>
+                            </div>
+
+                            <div className="profile-field">
+                                <strong>
+                                    12th Percentage
+                                </strong>
+                                <p>
+                                    {profile.twelfthPercentage !== ""
+                                        ? `${profile.twelfthPercentage}%`
+                                        : ""}
+                                </p>
+                            </div>
+
+                            <div className="profile-field">
+                                <strong>
+                                    University / College
+                                </strong>
+                                <p>{profile.university}</p>
+                            </div>
+
+                            <div className="profile-field">
+                                <strong>
+                                    Graduation Year
+                                </strong>
+                                <p>{profile.graduationYear}</p>
+                            </div>
+
+                            <div className="profile-field">
+                                <strong>
+                                    Graduation Percentage
+                                </strong>
+                                <p>
+                                    {profile.graduationPercentage !== ""
+                                        ? `${profile.graduationPercentage}%`
+                                        : ""}
+                                </p>
+                            </div>
+
                         </div>
 
                         <button
@@ -404,6 +556,62 @@ function Profile() {
                         className="auth-form"
                         onSubmit={handleSubmit}
                     >
+
+                        {/* =========================
+                            PERSONAL INFORMATION
+                        ========================= */}
+
+                        <h2>Personal Information</h2>
+
+                        <div className="form-group">
+                            <label htmlFor="phone">
+                                Phone Number
+                            </label>
+
+                            <input
+                                id="phone"
+                                name="phone"
+                                type="tel"
+                                value={profile.phone}
+                                onChange={handleChange}
+                                placeholder="e.g. 9876543210"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="address">
+                                Address
+                            </label>
+
+                            <textarea
+                                id="address"
+                                name="address"
+                                value={profile.address}
+                                onChange={handleChange}
+                                placeholder="Enter your full address"
+                                rows="3"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="dateOfBirth">
+                                Date of Birth
+                            </label>
+
+                            <input
+                                id="dateOfBirth"
+                                name="dateOfBirth"
+                                type="date"
+                                value={profile.dateOfBirth}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        {/* =========================
+                            EDUCATION INFORMATION
+                        ========================= */}
+
+                        <h2>Education Details</h2>
 
                         <div className="form-group">
                             <label htmlFor="education">
@@ -436,6 +644,98 @@ function Profile() {
                                 required
                             />
                         </div>
+
+                        <div className="form-group">
+                            <label htmlFor="tenthPercentage">
+                                10th Percentage
+                            </label>
+
+                            <input
+                                id="tenthPercentage"
+                                name="tenthPercentage"
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                                value={profile.tenthPercentage}
+                                onChange={handleChange}
+                                placeholder="e.g. 85.50"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="twelfthPercentage">
+                                12th Percentage
+                            </label>
+
+                            <input
+                                id="twelfthPercentage"
+                                name="twelfthPercentage"
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                                value={profile.twelfthPercentage}
+                                onChange={handleChange}
+                                placeholder="e.g. 82.00"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="university">
+                                University / College
+                            </label>
+
+                            <input
+                                id="university"
+                                name="university"
+                                type="text"
+                                value={profile.university}
+                                onChange={handleChange}
+                                placeholder="e.g. Punjabi University"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="graduationYear">
+                                Graduation Year
+                            </label>
+
+                            <input
+                                id="graduationYear"
+                                name="graduationYear"
+                                type="number"
+                                min="1950"
+                                max="2100"
+                                value={profile.graduationYear}
+                                onChange={handleChange}
+                                placeholder="e.g. 2026"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="graduationPercentage">
+                                Graduation Percentage / CGPA
+                            </label>
+
+                            <input
+                                id="graduationPercentage"
+                                name="graduationPercentage"
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                                value={profile.graduationPercentage}
+                                onChange={handleChange}
+                                placeholder="e.g. 78.50"
+                            />
+                        </div>
+
+                        {/* =========================
+                            EXISTING PROFILE INFORMATION
+                        ========================= */}
+
+                        <h2>Employment Profile</h2>
 
                         <div className="form-group">
                             <label htmlFor="skills">
@@ -518,9 +818,9 @@ function Profile() {
                     </form>
                 )}
 
-                {/* ================================================= */}
-                {/* RESUME SECTION */}
-                {/* ================================================= */}
+                {/* =================================================
+                    RESUME SECTION
+                ================================================= */}
 
                 <section className="resume-section">
 
@@ -558,6 +858,7 @@ function Profile() {
 
                     {/* Current Resume */}
                     {currentResume && !showReplaceResume && (
+
                         <div className="profile-summary">
 
                             <div className="profile-field">
@@ -601,6 +902,7 @@ function Profile() {
 
                     {/* Replace Resume Button */}
                     {currentResume && !showReplaceResume && (
+
                         <button
                             type="button"
                             className="primary-button auth-submit"

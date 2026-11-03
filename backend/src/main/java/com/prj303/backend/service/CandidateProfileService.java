@@ -49,12 +49,26 @@ public class CandidateProfileService {
             profileToSave.setUser(user);
         }
 
+        // Existing profile fields
         profileToSave.setEducation(profile.getEducation());
         profileToSave.setDegree(profile.getDegree());
         profileToSave.setSkills(profile.getSkills());
         profileToSave.setExperienceYears(profile.getExperienceYears());
         profileToSave.setLocation(profile.getLocation());
         profileToSave.setPreferredLocation(profile.getPreferredLocation());
+
+        // New personal information fields
+        profileToSave.setPhone(profile.getPhone());
+        profileToSave.setAddress(profile.getAddress());
+        profileToSave.setDateOfBirth(profile.getDateOfBirth());
+
+        // New education details
+        profileToSave.setTenthPercentage(profile.getTenthPercentage());
+        profileToSave.setTwelfthPercentage(profile.getTwelfthPercentage());
+        profileToSave.setUniversity(profile.getUniversity());
+        profileToSave.setGraduationYear(profile.getGraduationYear());
+        profileToSave.setGraduationPercentage(
+                profile.getGraduationPercentage());
 
         return profileRepository.save(profileToSave);
     }
