@@ -1072,3 +1072,60 @@
 .completion-item.completed .completion-icon {
     font-weight: 700;
 }
+.forgot-password-link {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.forgot-password-link a {
+    color: #173b60;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.forgot-password-link a:hover {
+    text-decoration: underline;
+}
+
+.forgot-back-link {
+    margin-top: 24px;
+    text-align: center;
+}
+
+.forgot-back-link a {
+    color: #173b60;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.forgot-back-link a:hover {
+    text-decoration: underline;
+}
+
+.secondary-button {
+    background: #ffffff;
+    color: #173b60;
+    border: 1px solid #173b60;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.secondary-button:hover {
+    background: #f0f4f8;
+}
+
+.auth-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.otp-expiry-note {
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: -12px;
+    margin-bottom: 0;
+}

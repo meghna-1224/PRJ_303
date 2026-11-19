@@ -1,4 +1,6 @@
+
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Login() {
 
@@ -19,52 +21,51 @@ function Login() {
     }
 
     async function handleSubmit(event) {
-    event.preventDefault();
+        event.preventDefault();
 
-    try {
-        const response = await fetch(
-            "http://localhost:8080/api/auth/login",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
-            }
-        );
-
-        if (response.ok) {
-
-            const user = await response.json();
-
-            console.log("Logged in user:", user);
-
-            localStorage.setItem(
-                "loggedInUser",
-                JSON.stringify(user)
+        try {
+            const response = await fetch(
+                "http://localhost:8080/api/auth/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                }
             );
 
-            setMessage("Login successful!");
+            if (response.ok) {
 
-            window.location.href = "/profile";
+                const user = await response.json();
 
-        } else {
+                console.log("Logged in user:", user);
 
-            const errorMessage = await response.text();
+                localStorage.setItem(
+                    "loggedInUser",
+                    JSON.stringify(user)
+                );
 
-            setMessage(errorMessage);
+                setMessage("Login successful!");
+
+                window.location.href = "/profile";
+
+            } else {
+
+                const errorMessage = await response.text();
+
+                setMessage(errorMessage);
+            }
+
+        } catch (error) {
+
+            console.error("Login error:", error);
+
+            setMessage("Unable to connect to the server.");
         }
-
-    } catch (error) {
-
-        console.error("Login error:", error);
-
-        setMessage("Unable to connect to the server.");
     }
-}
 
     return (
-
         <main className="auth-page">
 
             <div className="auth-container">
@@ -122,6 +123,12 @@ function Login() {
                             placeholder="Enter your password"
                             required
                         />
+
+                        <div className="forgot-password-link">
+                            <Link to="/forgot-password">
+                                Forgot Password?
+                            </Link>
+                        </div>
 
                     </div>
 

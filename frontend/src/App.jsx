@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Chatbot from "./components/Chatbot";
@@ -7,17 +8,16 @@ import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
 import MyApplications from "./pages/MyApplications";
 import JobMatches from "./pages/JobMatches";
 import Dashboard from "./pages/Dashboard";
 import "./App.css";
 
-
 function App() {
     return (
         <BrowserRouter>
-
             <Navbar />
 
             <Routes>
@@ -26,14 +26,14 @@ function App() {
                 <Route path="/jobs/:id" element={<JobDetails />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/applications" element={<MyApplications />} />
                 <Route path="/job-matches" element={<JobMatches />} />
-                
             </Routes>
-            <Chatbot />
 
+            <Chatbot />
         </BrowserRouter>
     );
 }
