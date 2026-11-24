@@ -1,168 +1,182 @@
 
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+    NavLink,
+    Link,
+    useNavigate,
+    useLocation
+} from "react-router-dom";
 
 function Navbar() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [user, setUser] = useState(() => {
-        const storedUser = localStorage.getItem("loggedInUser");
-
-        if (storedUser) {
-            try {
-                return JSON.parse(storedUser);
-            } catch {
-                return null;
-            }
+        try {
+            return JSON.parse(localStorage.getItem("loggedInUser")) || null;
+        } catch {
+            return null;
         }
-
-        return null;
     });
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    // Keep the navbar updated after navigation/login
+    useEffect(() => {
+        try {
+            setUser(
+                JSON.parse(localStorage.getItem("loggedInUser")) || null
+            );
+        } catch {
+            setUser(null);
+        }
+
+        setDropdownOpen(false);
+        setMobileOpen(false);
+    }, [location.pathname]);
+
+    function closeMenus() {
+        setDropdownOpen(false);
+        setMobileOpen(false);
+    }
 
     function handleLogout() {
         localStorage.removeItem("loggedInUser");
         setUser(null);
-        setDropdownOpen(false);
+        closeMenus();
         navigate("/");
     }
 
+    const navClass = ({ isActive }) =>
+        `site-nav-link ${isActive ? "active" : ""}`;
+
     return (
-        <header className="navbar">
-            <div className="navbar-container">
+        <header className="site-navbar">
+            <div className="site-navbar-container">
 
                 {/* BRAND */}
-                <Link to="/" className="brand">
-                    <div className="brand-title">
-                        PGRKAM
-                    </div>
-
-                    <div className="brand-subtitle">
+                <Link to="/" className="site-brand" onClick={closeMenus}>
+                    <span className="site-brand-name">PGRKAM</span>
+                    <span className="site-brand-subtitle">
                         Punjab Government Employment Services
-                    </div>
+                    </span>
                 </Link>
 
-                {/* MAIN NAVIGATION */}
-                <nav className="nav-links">
-                    <Link to="/">
+                {/* MOBILE MENU BUTTON */}
+                <button
+                    className="mobile-menu-toggle"
+                    onClick={() => setMobileOpen(!mobileOpen)}
+                    aria-label="Toggle navigation"
+                    aria-expanded={mobileOpen}
+                >
+                    {mobileOpen ? "✕" : "☰"}
+                </button>
+
+                {/* NAVIGATION */}
+                <nav className={`site-nav-links ${mobileOpen ? "mobile-open" : ""}`}>
+
+                    <NavLink to="/" end className={navClass} onClick={closeMenus}>
                         Home
-                    </Link>
+                    </NavLink>
 
-                    <Link to="/jobs">
-                        Jobs
-                    </Link>
+                    <NavLink to="/jobs" className={navClass} onClick={closeMenus}>
+                        Find Jobs
+                    </NavLink>
 
-                    <Link to="/">
-                        Employment Services
-                    </Link>
+                    {user && (
+                        <NavLink
+                            to="/job-matches"
+                            className={navClass}
+                            onClick={closeMenus}
+                        >
+                            Recommended Jobs
+                        </NavLink>
+                    )}
 
-                    <Link to="/">
-                        About Us
-                    </Link>
+                    {/* MOBILE ACCOUNT LINKS */}
+                    {user && (
+                        <div className="mobile-account-links">
+                            <Link to="/dashboard" onClick={closeMenus}>Dashboard</Link>
+                            <Link to="/profile" onClick={closeMenus}>My Profile</Link>
+                            <Link to="/applications" onClick={closeMenus}>My Applications</Link>
+                            <button onClick={handleLogout}>Logout</button>
+                        </div>
+                    )}
+
+                    {!user && (
+                        <div className="mobile-account-links">
+                            <Link to="/login" onClick={closeMenus}>Login</Link>
+                            <Link to="/register" onClick={closeMenus}>Register</Link>
+                        </div>
+                    )}
                 </nav>
 
                 {/* ACCOUNT AREA */}
-                <div className="nav-actions">
+                <div className="site-account-area">
                     {user ? (
-                        <div className="profile-menu">
+                        <div className="site-profile-menu">
 
                             <button
-                                className="profile-button"
-                                onClick={() =>
-                                    setDropdownOpen(!dropdownOpen)
-                                }
+                                className="site-profile-button"
+                                onClick={() => setDropdownOpen(!dropdownOpen)}
                             >
-                                <span className="profile-avatar">
+                                <span className="site-avatar">
                                     {user.name
                                         ? user.name.charAt(0).toUpperCase()
                                         : "U"}
                                 </span>
 
-                                <span className="profile-name">
-                                    {user.name}
+                                <span className="site-profile-name">
+                                    {user.name || "User"}
                                 </span>
 
-                                <span className="profile-arrow">
+                                <span className="site-profile-arrow">
                                     {dropdownOpen ? "▲" : "▼"}
                                 </span>
                             </button>
 
                             {dropdownOpen && (
-                                <div className="profile-dropdown">
+                                <div className="site-profile-dropdown">
 
-                                    <div className="dropdown-user">
-                                        <strong>
-                                            {user.name}
-                                        </strong>
-
-                                        <span>
-                                            {user.email}
-                                        </span>
+                                    <div className="site-dropdown-user">
+                                        <strong>{user.name || "User"}</strong>
+                                        <span>{user.email}</span>
                                     </div>
 
-                                    <div className="dropdown-divider"></div>
-                                    <Link
-                                        to="/dashboard"
-                                        onClick={() =>
-                                            setDropdownOpen(false)
-                                        }
-                                    >
+                                    <div className="site-dropdown-divider" />
+
+                                    <Link to="/dashboard" onClick={closeMenus}>
                                         Dashboard
                                     </Link>
-                                    <Link
-                                        to="/profile"
-                                        onClick={() =>
-                                            setDropdownOpen(false)
-                                        }
-                                    >
+
+                                    <Link to="/profile" onClick={closeMenus}>
                                         My Profile
                                     </Link>
 
-                                    <Link
-                                        to="/applications"
-                                        onClick={() =>
-                                            setDropdownOpen(false)
-                                        }
-                                    >
+                                    <Link to="/applications" onClick={closeMenus}>
                                         My Applications
                                     </Link>
 
-                                    <Link
-                                        to="/job-matches"
-                                        onClick={() =>
-                                            setDropdownOpen(false)
-                                        }
-                                    >
-                                        Recommended Jobs
-                                    </Link>
-
                                     <button
-                                        className="logout-button"
+                                        className="site-logout-button"
                                         onClick={handleLogout}
                                     >
                                         Logout
                                     </button>
-
                                 </div>
                             )}
                         </div>
                     ) : (
-                        <>
-                            <Link
-                                to="/login"
-                                className="login-button"
-                            >
+                        <div className="site-auth-buttons">
+                            <Link to="/login" className="site-login-button">
                                 Login
                             </Link>
 
-                            <Link
-                                to="/register"
-                                className="register-button"
-                            >
+                            <Link to="/register" className="site-register-button">
                                 Register
                             </Link>
-                        </>
+                        </div>
                     )}
                 </div>
 

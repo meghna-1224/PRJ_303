@@ -43,7 +43,6 @@ function ForgotPassword() {
 
             setMessage(data);
             setStep(2);
-
         } catch (err) {
             setError(err.message || "Unable to connect to the server.");
         } finally {
@@ -83,7 +82,6 @@ function ForgotPassword() {
             setResetToken(data.resetToken);
             setMessage(data.message || "OTP verified successfully.");
             setStep(3);
-
         } catch (err) {
             setError(err.message || "Unable to verify OTP.");
         } finally {
@@ -131,7 +129,6 @@ function ForgotPassword() {
             setTimeout(() => {
                 navigate("/login");
             }, 1500);
-
         } catch (err) {
             setError(err.message || "Unable to reset password.");
         } finally {
@@ -139,178 +136,276 @@ function ForgotPassword() {
         }
     }
 
+    const stepDetails = [
+        {
+            number: "01",
+            title: "Verify your email",
+            description: "Enter your registered email address."
+        },
+        {
+            number: "02",
+            title: "Verify OTP",
+            description: "Enter the six-digit code sent to you."
+        },
+        {
+            number: "03",
+            title: "Create password",
+            description: "Choose a new password for your account."
+        }
+    ];
+
     return (
-        <main className="auth-page">
-            <div className="auth-container">
+        <main className="auth-v2-page forgot-v2-page">
+            <div className="auth-v2-background-shape auth-v2-shape-one"></div>
+            <div className="auth-v2-background-shape auth-v2-shape-two"></div>
 
-                <div className="auth-header">
-                    <p className="hero-label">
-                        PGRKAM EMPLOYMENT SERVICES
-                    </p>
+            <div className="auth-v2-layout forgot-v2-layout">
 
-                    <h1>Forgot Password?</h1>
+                {/* Left information panel */}
+                <section className="auth-v2-intro forgot-v2-intro">
+                    <div className="auth-v2-brand-mark">P</div>
+
+                    <span className="auth-v2-intro-label">
+                        ACCOUNT RECOVERY
+                    </span>
+
+                    <h1>Let's get you back on track.</h1>
 
                     <p>
-                        {step === 1 &&
-                            "Enter your registered email address to receive a password reset OTP."}
-
-                        {step === 2 &&
-                            "Enter the six-digit OTP sent to your email address."}
-
-                        {step === 3 &&
-                            "Create a new password for your account."}
+                        Forgot your password? Don't worry. Follow these
+                        simple steps to securely regain access to your
+                        PGRKAM Employment Services account.
                     </p>
-                </div>
 
-                {step === 1 && (
-                    <form
-                        className="auth-form"
-                        onSubmit={handleRequestOtp}
-                    >
-                        <div className="form-group">
-                            <label htmlFor="email">
-                                Email Address
-                            </label>
+                    <div className="forgot-v2-steps">
+                        {stepDetails.map((item, index) => (
+                            <div
+                                className={`forgot-v2-step ${
+                                    step === index + 1
+                                        ? "active"
+                                        : step > index + 1
+                                        ? "completed"
+                                        : ""
+                                }`}
+                                key={item.number}
+                            >
+                                <div className="forgot-v2-step-number">
+                                    {step > index + 1 ? "✓" : item.number}
+                                </div>
 
-                            <input
-                                id="email"
-                                type="email"
-                                value={email}
-                                onChange={(event) =>
-                                    setEmail(event.target.value)
-                                }
-                                placeholder="Enter your registered email"
-                                required
-                            />
-                        </div>
+                                <div>
+                                    <strong>{item.title}</strong>
+                                    <span>{item.description}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
 
-                        <button
-                            type="submit"
-                            className="primary-button auth-submit"
-                            disabled={loading}
-                        >
-                            {loading ? "Sending OTP..." : "Send OTP"}
-                        </button>
-                    </form>
-                )}
+                    <div className="auth-v2-intro-footer">
+                        PGRKAM EMPLOYMENT SERVICES
+                    </div>
+                </section>
 
-                {step === 2 && (
-                    <form
-                        className="auth-form"
-                        onSubmit={handleVerifyOtp}
-                    >
-                        <div className="form-group">
-                            <label htmlFor="otp">
-                                Enter OTP
-                            </label>
+                {/* Right form card */}
+                <section className="auth-v2-card forgot-v2-card">
 
-                            <input
-                                id="otp"
-                                type="text"
-                                inputMode="numeric"
-                                maxLength="6"
-                                value={otp}
-                                onChange={(event) =>
-                                    setOtp(event.target.value.replace(/\D/g, ""))
-                                }
-                                placeholder="Enter 6-digit OTP"
-                                required
-                            />
-                        </div>
-                        <p className="otp-expiry-note">
-                            Your OTP is valid for 5 minutes.
+                    <div className="forgot-v2-progress">
+                        <div
+                            className="forgot-v2-progress-fill"
+                            style={{ width: `${(step / 3) * 100}%` }}
+                        ></div>
+                    </div>
+
+                    <div className="auth-v2-card-heading">
+                        <span className="auth-v2-eyebrow">
+                            STEP {step} OF 3
+                        </span>
+
+                        <h2>
+                            {step === 1 && "Forgot Password?"}
+                            {step === 2 && "Verify Your Email"}
+                            {step === 3 && "Create New Password"}
+                        </h2>
+
+                        <p>
+                            {step === 1 &&
+                                "Enter your registered email address and we'll send you a password reset OTP."}
+
+                            {step === 2 &&
+                                `We've sent a six-digit verification code to ${email}. Enter it below to continue.`}
+
+                            {step === 3 &&
+                                "Your email has been verified. Set a new password for your account."}
                         </p>
+                    </div>
 
-                        <button
-                            type="submit"
-                            className="primary-button auth-submit"
-                            disabled={loading || otp.length !== 6}
+                    {/* STEP 1: EMAIL */}
+                    {step === 1 && (
+                        <form
+                            className="auth-v2-form"
+                            onSubmit={handleRequestOtp}
                         >
-                            {loading ? "Verifying..." : "Verify OTP"}
-                        </button>
+                            <div className="auth-v2-form-group">
+                                <label htmlFor="email">
+                                    Registered Email Address
+                                </label>
 
-                        <button
-                            type="button"
-                            className="secondary-button"
-                            onClick={() => {
-                                setStep(1);
-                                setOtp("");
-                                setMessage("");
-                                setError("");
-                            }}
+                                <input
+                                    id="email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(event) =>
+                                        setEmail(event.target.value)
+                                    }
+                                    placeholder="Enter your registered email"
+                                    required
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="auth-v2-submit"
+                                disabled={loading}
+                            >
+                                {loading ? "Sending OTP..." : "Send OTP"}
+                                {!loading && <span>→</span>}
+                            </button>
+                        </form>
+                    )}
+
+                    {/* STEP 2: OTP */}
+                    {step === 2 && (
+                        <form
+                            className="auth-v2-form"
+                            onSubmit={handleVerifyOtp}
                         >
-                            Change Email
-                        </button>
-                    </form>
-                )}
+                            <div className="auth-v2-form-group">
+                                <label htmlFor="otp">
+                                    Six-Digit Verification Code
+                                </label>
 
-                {step === 3 && (
-                    <form
-                        className="auth-form"
-                        onSubmit={handleResetPassword}
-                    >
-                        <div className="form-group">
-                            <label htmlFor="newPassword">
-                                New Password
-                            </label>
+                                <input
+                                    id="otp"
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength="6"
+                                    value={otp}
+                                    onChange={(event) =>
+                                        setOtp(
+                                            event.target.value.replace(/\D/g, "")
+                                        )
+                                    }
+                                    placeholder="Enter 6-digit OTP"
+                                    autoComplete="one-time-code"
+                                    required
+                                />
 
-                            <input
-                                id="newPassword"
-                                type="password"
-                                value={newPassword}
-                                onChange={(event) =>
-                                    setNewPassword(event.target.value)
-                                }
-                                placeholder="Enter new password"
-                                required
-                            />
-                        </div>
+                                <span className="forgot-v2-field-note">
+                                    Your OTP is valid for 5 minutes.
+                                </span>
+                            </div>
 
-                        <div className="form-group">
-                            <label htmlFor="confirmPassword">
-                                Confirm New Password
-                            </label>
+                            <button
+                                type="submit"
+                                className="auth-v2-submit"
+                                disabled={loading || otp.length !== 6}
+                            >
+                                {loading ? "Verifying..." : "Verify OTP"}
+                                {!loading && <span>→</span>}
+                            </button>
 
-                            <input
-                                id="confirmPassword"
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(event) =>
-                                    setConfirmPassword(event.target.value)
-                                }
-                                placeholder="Re-enter new password"
-                                required
-                            />
-                        </div>
+                            <button
+                                type="button"
+                                className="forgot-v2-secondary-button"
+                                onClick={() => {
+                                    setStep(1);
+                                    setOtp("");
+                                    setMessage("");
+                                    setError("");
+                                }}
+                            >
+                                ← Change Email Address
+                            </button>
+                        </form>
+                    )}
 
-                        <button
-                            type="submit"
-                            className="primary-button auth-submit"
-                            disabled={loading}
+                    {/* STEP 3: NEW PASSWORD */}
+                    {step === 3 && (
+                        <form
+                            className="auth-v2-form"
+                            onSubmit={handleResetPassword}
                         >
-                            {loading ? "Resetting Password..." : "Reset Password"}
-                        </button>
-                    </form>
-                )}
+                            <div className="auth-v2-form-group">
+                                <label htmlFor="newPassword">
+                                    New Password
+                                </label>
 
-                {message && (
-                    <p className="status-message">
-                        {message}
-                    </p>
-                )}
+                                <input
+                                    id="newPassword"
+                                    type="password"
+                                    value={newPassword}
+                                    onChange={(event) =>
+                                        setNewPassword(event.target.value)
+                                    }
+                                    placeholder="Enter new password"
+                                    autoComplete="new-password"
+                                    required
+                                />
+                            </div>
 
-                {error && (
-                    <p className="error-message">
-                        {error}
-                    </p>
-                )}
+                            <div className="auth-v2-form-group">
+                                <label htmlFor="confirmPassword">
+                                    Confirm New Password
+                                </label>
 
-                <div className="forgot-back-link">
-                    <Link to="/login">
-                        Back to Login
-                    </Link>
-                </div>
+                                <input
+                                    id="confirmPassword"
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(event) =>
+                                        setConfirmPassword(event.target.value)
+                                    }
+                                    placeholder="Re-enter new password"
+                                    autoComplete="new-password"
+                                    required
+                                />
+                            </div>
 
+                            <button
+                                type="submit"
+                                className="auth-v2-submit"
+                                disabled={loading}
+                            >
+                                {loading
+                                    ? "Resetting Password..."
+                                    : "Reset Password"}
+                                {!loading && <span>→</span>}
+                            </button>
+                        </form>
+                    )}
+
+                    {message && (
+                        <p className="auth-v2-message success">
+                            {message}
+                        </p>
+                    )}
+
+                    {error && (
+                        <p className="auth-v2-message error">
+                            {error}
+                        </p>
+                    )}
+
+                    <div className="auth-v2-card-footer">
+                        Remembered your password?
+                        <Link to="/login"> Back to Login</Link>
+                    </div>
+
+                    <div className="auth-v2-security-note">
+                        <span>✓</span>
+                        Secure password recovery
+                    </div>
+                </section>
             </div>
         </main>
     );
